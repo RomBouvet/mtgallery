@@ -6,18 +6,20 @@ import Welcome from './views/Welcome/Welcome';
 import Cards from './views/Cards/Cards';
 import Sets from './views/Sets/Sets';
 import Other from './views/Other/Other';
+import CardViewer from './views/CardViewer/CardViewer';
 
 function App() {
   return (
-    <BrowserRouter className="appContainer">
+    <BrowserRouter>
       <Navbar></Navbar>
       <div className="app">
-        <Switch>
-          <Route exact path="/"><Welcome /></Route>
-          <Route exact path="/cards"><Cards /></Route>
-          <Route exact path="/sets"><Sets /></Route>
-          <Route exact path="/other"><Other /></Route>
-        </Switch>
+          <Switch>
+            <Route exact path="/"><Welcome /></Route>
+            <Route exact path="/cards"><Cards /></Route>
+            <Route exact path="/cards/:id/"><CardViewer/></Route>
+            <Route exact path="/sets"><Sets /></Route>
+            <Route exact path="/other"><Other /></Route>
+          </Switch>
       </div>
 
     </BrowserRouter>
