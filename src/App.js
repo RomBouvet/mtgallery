@@ -12,7 +12,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar></Navbar>
-      <div className="app">
+      <div class="flex flex-col items-center">
           <Switch>
             <Route exact path="/"><Welcome /></Route>
             <Route exact path="/cards"><Cards /></Route>

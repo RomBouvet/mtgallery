@@ -10,6 +10,9 @@ module.exports = {
         'auto-fit-400': 'repeat(auto-fit, 400px)',
         'auto-fill-200': 'repeat(auto-fill, 200px)',
         'auto-fill-400': 'repeat(auto-fill, 400px)',
+      },
+      spacing: {
+        '200': '46rem'
       }
     },
   },
