@@ -1,85 +1,122 @@
 import './CardViewer.scss';
+import { Component } from 'react'
 import 'mana-font';
-import {
-    useParams
-} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
-export default function CardViewer() {
-    let { id } = useParams();
-    return (
-        <div class="flex flex-col items-center w-full">
-            <div class="flex flex-row flex-wrap items-start w-200">
-                <img class="w-2/5 pr-4" src={"https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + id + "&type=card"} alt="" />
-                <div class="w-3/5 border-2">
-                    <div class="flex justify-between border p-3">
-                        <div class="text-lg">The Ur-Dragon</div>
-                        <div>
-                            <i class="ms ms-cost ms-4 ms-shadow mr-1"></i>
-                            <i class="ms ms-cost ms-w ms-shadow mr-1"></i>
-                            <i class="ms ms-cost ms-u ms-shadow mr-1"></i>
-                            <i class="ms ms-cost ms-b ms-shadow mr-1"></i>
-                            <i class="ms ms-cost ms-r ms-shadow mr-1"></i>
-                            <i class="ms ms-cost ms-g ms-shadow mr-1"></i>
-                        </div>
-                    </div>
-                    <div class="border p-2">Legendary Creature - Dragon Avatar</div>
-                    <div class="border p-2">10 / 10</div>
-                    <div class="border p-2">
-                        <div class="mb-4">
-                            <i>Eminence</i> — Tant que L'Ur-Dragon est dans la zone de commandement ou sur le champ de bataille, les autres sorts de dragon que vous lancez coûtent de moins à lancer.<br />
-                            Vol<br />
-                            À chaque fois qu'au moins un dragon que vous contrôlez attaque, piochez autant cartes, puis vous pouvez mettre sur le champ de bataille une carte de permanent de votre main.
-                        </div>
-                        <div class="italic">
-                            Flavor Text
-                        </div>
+class CardViewer extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			error: null,
+			isLoaded: false,
+			card: {}
+		};
+	}
 
-                    </div>
-                    <div class="border p-2">
-                        Illustrated by Jim Murray
-                    </div>
-                    <div class="border p-2">
-                        <div>Ultimate Masters (2015)<i class="ml-2 ms ms-chaos"></i></div>
-                        <div>Inistrad (2012)<i class="ml-2 ms ms-guild-boros"></i></div>
-                    </div>
-                    <div class="border p-2">
-                        <dl class="flex flex-wrap">
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Not Legal</dd><dt>Standard</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Not Legal</dd><dt>Brawl</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Not Legal</dd><dt>Pioneer</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Not Legal</dd><dt>Historic</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Not Legal</dd><dt>Modern</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Not Legal</dd><dt>Pauper</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Legal</dd><dt>Legacy</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Not Legal</dd><dt>Penny</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Legal</dd><dt>Vintage</dt></div>
-                            <div class="w-1/2 h-7 mb-1 flex flex-nowrap"><dd class="w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center">Legal</dd><dt>Commander</dt></div>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col bg-red-100 w-full items-center p-4 m-4">
-                <div class="flex flex-row flex-wrap w-200 text-justify">
-                    <h3 class="w-full text-lg mb-2">Notes and Rules Information for The Ur-Dragon: </h3>
-                    <div class="w-1/2 pr-3 mb-2">
-                        You draw one card for each Dragon you controlled that attacked, even if some of them left the battlefield before The Ur-Dragon’s triggered ability resolves.
-                        <div class="text-sm italic text-gray-600">(25/08/2017)</div>
-                    </div>
-                    <div class="w-1/2 pl-3 mb-2">
-                        If a Dragon you control enters the battlefield attacking, it won’t cause The Ur-Dragon’s last ability to trigger.
-                        <div class="text-sm italic text-gray-600">(25/08/2017)</div>
-                    </div>
-                    <div class="w-1/2 pr-3 mb-2">
-                        You may only put one permanent card from your hand onto the battlefield, no matter how many Dragons you attacked with or how many players they attacked.
-                        <div class="text-sm italic text-gray-600">(25/08/2017)</div>
-                    </div>
+	componentDidMount() {
+		const id = this.props.match.params.id;
+		fetch("http://localhost:8080/cards/" + id, {
+			// mode: 'no-cors',
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			}
+		})
+			.then(res => res.json())
+			.then(
+				(result) => {
+					console.log("id - " + id);
+					console.log(result[0])
+					this.setState({
+						isLoaded: true,
+						card: result[0]
+					});
+				},
+				// Remarque : il est important de traiter les erreurs ici
+				// au lieu d'utiliser un bloc catch(), pour ne pas passer à la trappe
+				// des exceptions provenant de réels bugs du composant.
+				(error) => {
+					console.log(error)
+					this.setState({
+						isLoaded: true,
+						error
+					});
+				}
+			)
+	}
 
-                    <div class="w-1/2 pl-3 mb-2">
-                        The Ur-Dragon’s triggered ability resolves after all attackers have been chosen. You can’t attack with some Dragons, put a creature card with haste onto the battlefield, and then attack with that creature. Similarly, any “whenever a creature attacks” abilities of the permanent card you put onto the battlefield won’t trigger.
-                        <div class="text-sm italic text-gray-600">(25/08/2017)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+	render() {
+		const { error, isLoaded, card } = this.state;
+		if (error) {
+			console.log(error);
+			return <div>Erreur : {error.message}</div>;
+		} else if (!isLoaded) {
+			return <div>Chargement…</div>;
+		} else {
+			return (
+				<div className="flex flex-col items-center w-full">
+					<div className="flex flex-row flex-wrap items-start w-200">
+						<img className="w-2/5 pr-4" src={"https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + card.id + "&type=card"} alt="" />
+						<div className="w-3/5 border-2">
+							<div className="flex justify-between border p-3">
+								<div className="text-lg">{card.name}</div>
+								<div>
+									<i className="ms ms-cost ms-4 ms-shadow mr-1"></i>
+									<i className="ms ms-cost ms-w ms-shadow mr-1"></i>
+									<i className="ms ms-cost ms-u ms-shadow mr-1"></i>
+									<i className="ms ms-cost ms-b ms-shadow mr-1"></i>
+									<i className="ms ms-cost ms-r ms-shadow mr-1"></i>
+									<i className="ms ms-cost ms-g ms-shadow mr-1"></i>
+								</div>
+							</div>
+							<div className="border p-2">{card.type}</div>
+							{ card.types.includes("Creature") ? <div className="border p-2">10 / 10</div> : null }
+							<div className="border p-2">
+								<div>{ card.text }</div>
+								{ card.flavorText ? <div className="italic mt-4">{ card.flavorText }</div> : '' }
+							</div>
+							<div className="border p-2">{ 'Illustrated by ' + card.artist }</div>
+							<div className="border p-2">
+								{
+									// need to get all sets in api
+									card.printings.map((e, i) => {
+										return <div key={i}>Name (date) - {e}<i className="ml-2 ms ms-chaos"></i></div>
+									})
+								}
+							</div>
+							<div className="border p-2">
+								<dl className="flex flex-wrap">
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.standard ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.standard ? "Legal" : "Not Legal") }</dd><dt>Standard</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.brawl ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.brawl ? "Legal" : "Not Legal") }</dd><dt>Brawl</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.pioneer ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.pioneer ? "Legal" : "Not Legal") }</dd><dt>Pioneer</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.historic ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.historic ? "Legal" : "Not Legal") }</dd><dt>Historic</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.modern ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.modern ? "Legal" : "Not Legal") }</dd><dt>Modern</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.pauper ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.pauper ? "Legal" : "Not Legal") }</dd><dt>Pauper</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.legacy ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.legacy ? "Legal" : "Not Legal") }</dd><dt>Legacy</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.penny ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.penny ? "Legal" : "Not Legal") }</dd><dt>Penny</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.vintage ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.vintage ? "Legal" : "Not Legal") }</dd><dt>Vintage</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.commander ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.commander ? "Legal" : "Not Legal") }</dd><dt>Commander</dt></div>
+								</dl>
+							</div>
+						</div>
+					</div>
+					<div className="flex flex-col bg-red-100 w-full items-center p-4 m-4">
+						<div className="flex flex-row flex-wrap w-200 text-justify">
+							<h3 className="w-full text-lg mb-2">Notes and Rules Information for { card.name } : </h3>
+							{
+								card.rulings.map((e, i) => {
+									return <div key="i" className={ (i%2 ? "pl-3" : "pr-3") + " w-1/2 mb-2"}>
+										{e.text}
+										<div className="text-sm italic text-gray-600">({e.date})</div>
+									</div>
+								})
+							}
+						</div>
+					</div>
+				</div>
+			);
+		}
+	}
 }
+
+export default withRouter(CardViewer);
