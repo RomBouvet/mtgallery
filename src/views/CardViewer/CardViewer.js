@@ -2,6 +2,27 @@ import './CardViewer.scss';
 import { Component } from 'react'
 import 'mana-font';
 import { withRouter } from "react-router-dom";
+import Masonry from "react-responsive-masonry"
+
+var ReactDOMServer = require('react-dom/server');
+var HtmlToReactParser = require('html-to-react').Parser;
+var htmlToReactParser = new HtmlToReactParser()
+
+const addManaCost = (text) => {
+	return (
+		ReactDOMServer.renderToStaticMarkup(
+			htmlToReactParser.parse(
+				text.replaceAll(/\{([WRGUB]|[0-9]*)\}/g, (str) => {
+					if (/\d/.test(str)) {
+						return "<i className='ms-" + str.match(/[\d]/g) + " ms ms-cost ms-shadow mr-1'></i>";
+					} else {
+						return "<i className='ms-" + (str.match(/[A-Z]/g)[0]).toLowerCase() + " ms ms-cost ms-shadow mr-1'></i>";
+					}
+				})
+			)
+		)
+	)
+};
 
 class CardViewer extends Component {
 	constructor(props) {
@@ -60,22 +81,16 @@ class CardViewer extends Component {
 						<div className="w-3/5 border-2">
 							<div className="flex justify-between border p-3">
 								<div className="text-lg">{card.name}</div>
-								<div>
-									<i className="ms ms-cost ms-4 ms-shadow mr-1"></i>
-									<i className="ms ms-cost ms-w ms-shadow mr-1"></i>
-									<i className="ms ms-cost ms-u ms-shadow mr-1"></i>
-									<i className="ms ms-cost ms-b ms-shadow mr-1"></i>
-									<i className="ms ms-cost ms-r ms-shadow mr-1"></i>
-									<i className="ms ms-cost ms-g ms-shadow mr-1"></i>
-								</div>
+								<div dangerouslySetInnerHTML={{ __html: addManaCost(card.manaCost) }}></div>
 							</div>
 							<div className="border p-2">{card.type}</div>
-							{ card.types.includes("Creature") ? <div className="border p-2">10 / 10</div> : null }
+							{card.power ? <div className="border p-2">{card.power} / {card.toughness}</div> : null}
+							{card.loyalty ? <div className="border p-2">{card.loyalty}</div> : null}
 							<div className="border p-2">
-								<div>{ card.text }</div>
-								{ card.flavorText ? <div className="italic mt-4">{ card.flavorText }</div> : '' }
+								<div dangerouslySetInnerHTML={{ __html: addManaCost(card.text) }}></div>
+								{card.flavorText ? <div className="italic mt-4">{card.flavorText}</div> : ''}
 							</div>
-							<div className="border p-2">{ 'Illustrated by ' + card.artist }</div>
+							<div className="border p-2">{'Illustrated by ' + card.artist}</div>
 							<div className="border p-2">
 								{
 									// need to get all sets in api
@@ -86,31 +101,32 @@ class CardViewer extends Component {
 							</div>
 							<div className="border p-2">
 								<dl className="flex flex-wrap">
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.standard ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.standard ? "Legal" : "Not Legal") }</dd><dt>Standard</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.brawl ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.brawl ? "Legal" : "Not Legal") }</dd><dt>Brawl</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.pioneer ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.pioneer ? "Legal" : "Not Legal") }</dd><dt>Pioneer</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.historic ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.historic ? "Legal" : "Not Legal") }</dd><dt>Historic</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.modern ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.modern ? "Legal" : "Not Legal") }</dd><dt>Modern</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.pauper ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.pauper ? "Legal" : "Not Legal") }</dd><dt>Pauper</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.legacy ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.legacy ? "Legal" : "Not Legal") }</dd><dt>Legacy</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.penny ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.penny ? "Legal" : "Not Legal") }</dd><dt>Penny</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.vintage ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.vintage ? "Legal" : "Not Legal") }</dd><dt>Vintage</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={ (card.legalities.commander ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{ (card.legalities.commander ? "Legal" : "Not Legal") }</dd><dt>Commander</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.standard ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.standard ? "Legal" : "Not Legal")}</dd><dt>Standard</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.brawl ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.brawl ? "Legal" : "Not Legal")}</dd><dt>Brawl</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.pioneer ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.pioneer ? "Legal" : "Not Legal")}</dd><dt>Pioneer</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.historic ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.historic ? "Legal" : "Not Legal")}</dd><dt>Historic</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.modern ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.modern ? "Legal" : "Not Legal")}</dd><dt>Modern</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.pauper ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.pauper ? "Legal" : "Not Legal")}</dd><dt>Pauper</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.legacy ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.legacy ? "Legal" : "Not Legal")}</dd><dt>Legacy</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.penny ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.penny ? "Legal" : "Not Legal")}</dd><dt>Penny</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.vintage ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.vintage ? "Legal" : "Not Legal")}</dd><dt>Vintage</dt></div>
+									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.commander ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.commander ? "Legal" : "Not Legal")}</dd><dt>Commander</dt></div>
 								</dl>
 							</div>
 						</div>
 					</div>
 					<div className="flex flex-col bg-red-100 w-full items-center p-4 m-4">
 						<div className="flex flex-row flex-wrap w-200 text-justify">
-							<h3 className="w-full text-lg mb-2">Notes and Rules Information for { card.name } : </h3>
-							{
-								card.rulings.map((e, i) => {
-									return <div key="i" className={ (i%2 ? "pl-3" : "pr-3") + " w-1/2 mb-2"}>
-										{e.text}
-										<div className="text-sm italic text-gray-600">({e.date})</div>
-									</div>
-								})
-							}
+							<h3 className="w-full text-lg mb-2">Notes and Rules Information for {card.name} : </h3>
+							<Masonry columnsCount={2}>
+								{
+									card.rulings.map((e, i) => {
+										return (
+											<div key="i" className={(i % 2 ? "pl-4" : "pr-4") + " mb-4"} dangerouslySetInnerHTML={{ __html: addManaCost(e.text) + "<div class='text-sm italic text-gray-600 text-right'>" + e.date + "</div>" }}></div>
+										)
+									})
+								}
+							</Masonry>
 						</div>
 					</div>
 				</div>
