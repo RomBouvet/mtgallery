@@ -95,7 +95,7 @@ class CardViewer extends Component {
 								{
 									// need to get all sets in api
 									card.printings.map((e, i) => {
-										return <div key={i}>Name (date) - {e}<i className="ml-2 ms ms-chaos"></i></div>
+										return <div key={i} className="flex flex-row">{e.name}<img className="max-h-full" src={"https://gatherer.wizards.com/Handlers/Image.ashx?type=symbol&set="+ e.code +"&size=medium&rarity=C"} alt='&nbsp;'/>({e.releaseDate.substr(0,4)})</div>
 									})
 								}
 							</div>
