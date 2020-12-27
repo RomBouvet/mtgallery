@@ -1,19 +1,19 @@
 import { Component } from 'react';
 import CardTile from '../../components/CardTile/CardTile';
-import './Cards.css';
 
-export default class Cards extends Component {
+export default class SetViewer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       error: null,
       isLoaded: false,
-      cards: []
+      sets: []
     };
   }
 
   componentDidMount() {
-    fetch("http://localhost:8080/cards/", {
+    const id = this.props.match.params.id;
+    fetch("http://localhost:8080/sets/"+id, {
       // mode: 'no-cors',
       method: 'GET',
       headers: {
@@ -23,9 +23,10 @@ export default class Cards extends Component {
       .then(res => res.json())
       .then(
         (result) => {
+          console.log(result[0])
           this.setState({
             isLoaded: true,
-            cards: result
+            set: result[0]
           });
         },
         // Remarque : il est important de traiter les erreurs ici
@@ -42,7 +43,7 @@ export default class Cards extends Component {
   }
 
   render() {
-    const { error, isLoaded, cards } = this.state;
+    const { error, isLoaded, set } = this.state;
     if (error) {
       console.log(error);
       return <div>Erreur : {error.message}</div>;
@@ -51,8 +52,8 @@ export default class Cards extends Component {
     } else {
       return (
         <div className="w-full grid grid-cols-auto-fill-200 gap-4 pr-4 pl-4">
-          {cards.map(card => (
-            <CardTile key={card.id} id={card.id} />
+          {set.cards.map(card => (
+            <CardTile key={card.identifiers.multiverseId} id={card.identifiers.multiverseId} />
           ))}
         </div>
       );
