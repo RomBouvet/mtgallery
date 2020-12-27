@@ -1,5 +1,5 @@
-import { Component } from 'react';
 import './Sets.css';
+import { Component } from 'react';
 import {
   Link
 } from "react-router-dom";
@@ -25,7 +25,6 @@ export default class Sets extends Component {
       .then(res => res.json())
       .then(
         (result) => {
-          console.log(result)
           this.setState({
             isLoaded: true,
             sets: result

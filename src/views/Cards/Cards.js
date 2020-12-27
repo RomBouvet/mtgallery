@@ -1,6 +1,16 @@
-import { Component } from 'react';
+import { React,Component } from 'react';
 import CardTile from '../../components/CardTile/CardTile';
+import Pagination from '../../components/Pagination/Pagination';
 import './Cards.css';
+import queryString from 'query-string';
+
+function getPage(){
+  if(window.location.search){
+    return parseInt(queryString.parse(window.location.search).page ? queryString.parse(window.location.search).page : 1);
+  }
+
+  return 1
+}
 
 export default class Cards extends Component {
   constructor(props) {
@@ -13,7 +23,8 @@ export default class Cards extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:8080/cards/", {
+    let page = getPage();
+    fetch("http://localhost:8080/cards/?page="+page, {
       // mode: 'no-cors',
       method: 'GET',
       headers: {
@@ -50,10 +61,14 @@ export default class Cards extends Component {
       return <div>Chargement…</div>;
     } else {
       return (
-        <div className="w-full grid grid-cols-auto-fill-200 gap-4 pr-4 pl-4">
-          {cards.map(card => (
-            <CardTile key={card.id} id={card.id} />
-          ))}
+        <div className="w-full flex flex-col align-center">
+          <Pagination></Pagination>
+          <div className="w-full grid grid-cols-auto-fill-200 gap-4 pr-4 pl-4">
+            {cards.map(card => (
+              <CardTile key={card.id} id={card.id} alt={card.name} />
+            ))}
+          </div>
+          <Pagination></Pagination>
         </div>
       );
     }

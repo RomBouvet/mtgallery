@@ -1,6 +1,6 @@
 import './CardViewer.scss';
-import { Component } from 'react'
 import 'mana-font';
+import { Component } from 'react'
 import { withRouter } from "react-router-dom";
 import Masonry from "react-responsive-masonry"
 
@@ -9,6 +9,8 @@ var HtmlToReactParser = require('html-to-react').Parser;
 var htmlToReactParser = new HtmlToReactParser()
 
 const addManaCost = (text) => {
+	if(!text)
+		return '';
 	return (
 		ReactDOMServer.renderToStaticMarkup(
 			htmlToReactParser.parse(
@@ -46,8 +48,6 @@ class CardViewer extends Component {
 			.then(res => res.json())
 			.then(
 				(result) => {
-					console.log("id - " + id);
-					console.log(result[0])
 					this.setState({
 						isLoaded: true,
 						card: result[0]
@@ -68,6 +68,7 @@ class CardViewer extends Component {
 
 	render() {
 		const { error, isLoaded, card } = this.state;
+		console.log(card);
 		if (error) {
 			console.log(error);
 			return <div>Erreur : {error.message}</div>;
@@ -87,7 +88,7 @@ class CardViewer extends Component {
 							{card.power ? <div className="border p-2">{card.power} / {card.toughness}</div> : null}
 							{card.loyalty ? <div className="border p-2">{card.loyalty}</div> : null}
 							<div className="border p-2">
-								<div dangerouslySetInnerHTML={{ __html: addManaCost(card.text) }}></div>
+								{card.text ? <div dangerouslySetInnerHTML={{ __html: addManaCost(card.text) }}></div> : ''}
 								{card.flavorText ? <div className="italic mt-4">{card.flavorText}</div> : ''}
 							</div>
 							<div className="border p-2">{'Illustrated by ' + card.artist}</div>
@@ -95,7 +96,7 @@ class CardViewer extends Component {
 								{
 									// need to get all sets in api
 									card.printings.map((e, i) => {
-										return <div key={i} className="flex flex-row">{e.name}<img className="max-h-full" src={"https://gatherer.wizards.com/Handlers/Image.ashx?type=symbol&set="+ e.code +"&size=medium&rarity=C"} alt='&nbsp;'/>({e.releaseDate.substr(0,4)})</div>
+										return <div key={i} className="flex flex-row">{e.name}<img className="max-h-full" src={"https://gatherer.wizards.com/Handlers/Image.ashx?type=symbol&set=" + e.code + "&size=medium&rarity=C"} alt='&nbsp;' />({e.releaseDate.substr(0, 4)})</div>
 									})
 								}
 							</div>
@@ -115,20 +116,25 @@ class CardViewer extends Component {
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col bg-red-100 w-full items-center p-4 m-4">
-						<div className="flex flex-row flex-wrap w-200 text-justify">
-							<h3 className="w-full text-lg mb-2">Notes and Rules Information for {card.name} : </h3>
-							<Masonry columnsCount={2}>
-								{
-									card.rulings.map((e, i) => {
-										return (
-											<div key="i" className={(i % 2 ? "pl-4" : "pr-4") + " mb-4"} dangerouslySetInnerHTML={{ __html: addManaCost(e.text) + "<div class='text-sm italic text-gray-600 text-right'>" + e.date + "</div>" }}></div>
-										)
-									})
-								}
-							</Masonry>
-						</div>
-					</div>
+					{
+						(card.rulings.length > 0 ?
+							(<div className="flex flex-col bg-red-100 w-full items-center p-4 m-4">
+								<div className="flex flex-row flex-wrap w-200 text-justify">
+									<h3 className="w-full text-lg mb-2">Notes and Rules Information for {card.name} : </h3>
+									<Masonry columnsCount={2}>
+										{
+											card.rulings.map((e, i) => {
+												return (
+													<div key="i" className={(i % 2 ? "pl-4" : "pr-4") + " mb-4"} dangerouslySetInnerHTML={{ __html: addManaCost(e.text) + "<div class='text-sm italic text-gray-600 text-right'>" + e.date + "</div>" }}></div>
+												)
+											})
+										}
+									</Masonry>
+								</div>
+							</div>) : ''
+						)
+					}
+
 				</div>
 			);
 		}

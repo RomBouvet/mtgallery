@@ -53,7 +53,7 @@ export default class SetViewer extends Component {
       return (
         <div className="w-full grid grid-cols-auto-fill-200 gap-4 pr-4 pl-4">
           {set.cards.map(card => (
-            <CardTile key={card.identifiers.multiverseId} id={card.identifiers.multiverseId} />
+            <CardTile key={card.identifiers.multiverseId} id={card.identifiers.multiverseId} alt={card.name}/>
           ))}
         </div>
       );
