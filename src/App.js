@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import Navbar from './components/Navbar/Navbar.js';
 import { Switch, Route } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
@@ -13,7 +13,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar></Navbar>
-      <div className="flex flex-col items-center">
+      <div className="app">
           <Switch>
             <Route exact path="/"><Welcome /></Route>
             <Route exact path="/cards"><Cards /></Route>

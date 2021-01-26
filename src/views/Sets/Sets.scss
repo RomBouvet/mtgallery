@@ -1,0 +1,61 @@
+#sets {
+  width: 100%;
+}
+
+.header {
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  select {
+    width: 100px;
+    margin: 0 20px;
+  }
+}
+
+.setsTable {
+  width: 1000px;
+  border-collapse: collapse;
+
+  thead {
+    tr {
+      height: 50px;
+      text-transform: uppercase;
+    }
+  }
+
+  tbody {
+    tr {
+      height: 35px;
+      border-top: 1px solid rgb(190, 190, 190);
+      border-bottom: 1px solid rgb(190, 190, 190);
+    }
+
+    tr:nth-child(odd) {
+      background-color: rgb(245, 245, 245);
+    }
+
+    tr:nth-child(even) {
+      background-color: rgb(231, 231, 231);
+    }
+  }
+
+  .setName,
+  .languages {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .setName div {
+    margin: 0 5px;
+  }
+
+  .languages div {
+    margin: 0 2px;
+    border-radius: 10%;
+    padding: 1px 4px;
+    border: 1px solid black;
+  }
+}

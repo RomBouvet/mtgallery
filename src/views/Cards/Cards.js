@@ -61,9 +61,8 @@ export default class Cards extends Component {
       return <div>Chargement…</div>;
     } else {
       return (
-        <div className="w-full flex flex-col align-center">
-          <Pagination></Pagination>
-          <div className="w-full grid grid-cols-auto-fill-200 gap-4 pr-4 pl-4">
+        <div>
+          <div>
             {cards.map(card => (
               <CardTile key={card.id} id={card.id} alt={card.name} />
             ))}

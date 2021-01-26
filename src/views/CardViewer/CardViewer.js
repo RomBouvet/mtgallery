@@ -76,7 +76,7 @@ class CardViewer extends Component {
 			return <div>Chargement…</div>;
 		} else {
 			return (
-				<div className="flex flex-col items-center w-full">
+				<div className="flex flex-col items-center w-full mb-8">
 					<div className="flex flex-row flex-wrap items-start w-200">
 						<img className="w-2/5 pr-4" src={"https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + card.id + "&type=card"} alt="" />
 						<div className="w-3/5 border-2">

@@ -1,3 +1,0 @@
-before_install:
-  - npm i -g npm
-language: node_js

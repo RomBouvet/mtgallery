@@ -1,0 +1,36 @@
+#setViewer {
+  .header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 1000px;
+    height: 70px;
+    
+    .setInfos {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+  
+      div:first-child{
+        font-size: 20px;
+      }
+  
+      img{
+        max-height: 40px;
+      }
+    }
+  }
+
+
+  .cardList {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    .cardTile img{
+      margin-bottom: 10px;
+      width: 240px;
+    }
+  }
+}
