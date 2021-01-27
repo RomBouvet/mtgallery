@@ -9,7 +9,7 @@ var HtmlToReactParser = require('html-to-react').Parser;
 var htmlToReactParser = new HtmlToReactParser()
 
 const addManaCost = (text) => {
-	if(!text)
+	if (!text)
 		return '';
 	return (
 		ReactDOMServer.renderToStaticMarkup(
@@ -76,65 +76,67 @@ class CardViewer extends Component {
 			return <div>Chargement…</div>;
 		} else {
 			return (
-				<div className="flex flex-col items-center w-full mb-8">
-					<div className="flex flex-row flex-wrap items-start w-200">
-						<img className="w-2/5 pr-4" src={"https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + card.id + "&type=card"} alt="" />
-						<div className="w-3/5 border-2">
-							<div className="flex justify-between border p-3">
-								<div className="text-lg">{card.name}</div>
-								<div dangerouslySetInnerHTML={{ __html: addManaCost(card.manaCost) }}></div>
-							</div>
-							<div className="border p-2">{card.type}</div>
-							{card.power ? <div className="border p-2">{card.power} / {card.toughness}</div> : null}
-							{card.loyalty ? <div className="border p-2">{card.loyalty}</div> : null}
-							<div className="border p-2">
-								{card.text ? <div dangerouslySetInnerHTML={{ __html: addManaCost(card.text) }}></div> : ''}
-								{card.flavorText ? <div className="italic mt-4">{card.flavorText}</div> : ''}
-							</div>
-							<div className="border p-2">{'Illustrated by ' + card.artist}</div>
-							<div className="border p-2">
-								{
-									// need to get all sets in api
-									card.printings.map((e, i) => {
-										return <div key={i} className="flex flex-row">{e.name}<img className="max-h-full" src={"https://gatherer.wizards.com/Handlers/Image.ashx?type=symbol&set=" + e.code + "&size=medium&rarity=C"} alt='&nbsp;' />({e.releaseDate.substr(0, 4)})</div>
-									})
-								}
-							</div>
-							<div className="border p-2">
-								<dl className="flex flex-wrap">
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.standard ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.standard ? "Legal" : "Not Legal")}</dd><dt>Standard</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.brawl ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.brawl ? "Legal" : "Not Legal")}</dd><dt>Brawl</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.pioneer ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.pioneer ? "Legal" : "Not Legal")}</dd><dt>Pioneer</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.historic ? "bg-green-600" : "bg-gray-400") + " w-20 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.historic ? "Legal" : "Not Legal")}</dd><dt>Historic</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.modern ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.modern ? "Legal" : "Not Legal")}</dd><dt>Modern</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.pauper ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.pauper ? "Legal" : "Not Legal")}</dd><dt>Pauper</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.legacy ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.legacy ? "Legal" : "Not Legal")}</dd><dt>Legacy</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.penny ? "bg-green-600" : "bg-gray-400") + " w-20 bg-gray-400 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.penny ? "Legal" : "Not Legal")}</dd><dt>Penny</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.vintage ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.vintage ? "Legal" : "Not Legal")}</dd><dt>Vintage</dt></div>
-									<div className="w-1/2 h-7 mb-1 flex flex-nowrap"><dd className={(card.legalities.commander ? "bg-green-600" : "bg-gray-400") + " w-20 bg-green-600 text-white rounded mr-2 uppercase text-sm flex items-center justify-center"}>{(card.legalities.commander ? "Legal" : "Not Legal")}</dd><dt>Commander</dt></div>
-								</dl>
+				<div id="cardViewer">
+					<div className="container">
+						<div className="cardProfile">
+							<img src={"https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + card.id + "&type=card"} alt="" />
+							<div className="cardDescription">
+								<div className="row">
+									<h2>{card.name}</h2>
+									<div dangerouslySetInnerHTML={{ __html: addManaCost(card.manaCost) }}></div>
+								</div>
+								<div>{card.type}</div>
+								{card.power ? <div>{card.power} / {card.toughness}</div> : null}
+								{card.loyalty ? <div>{card.loyalty}</div> : null}
+								<div className="texts">
+									{card.text ? <div dangerouslySetInnerHTML={{ __html: addManaCost(card.text) }}></div> : ''}
+									{card.flavorText ? <div className="flavor">{card.flavorText}</div> : ''}
+								</div>
+								<div>{'Illustrated by ' + card.artist}</div>
+								<div className="printings">
+									{
+										// need to get all sets in api
+										card.printings.map((e, i) => {
+											return <div key={i} className="row">{e.name}<img className="max-h-full" src={"https://gatherer.wizards.com/Handlers/Image.ashx?type=symbol&set=" + e.code + "&size=medium&rarity=C"} alt='&nbsp;' />({e.releaseDate.substr(0, 4)})</div>
+										})
+									}
+								</div>
+								<div className="legalities">
+									<dl>
+										<div><dd className={(card.legalities.standard ? "legal" : "illegal")}>{(card.legalities.standard ? "Legal" : "Not Legal")}</dd><dt>Standard</dt></div>
+										<div><dd className={(card.legalities.brawl ? "legal" : "illegal")}>{(card.legalities.brawl ? "Legal" : "Not Legal")}</dd><dt>Brawl</dt></div>
+										<div><dd className={(card.legalities.pioneer ? "legal" : "illegal")}>{(card.legalities.pioneer ? "Legal" : "Not Legal")}</dd><dt>Pioneer</dt></div>
+										<div><dd className={(card.legalities.historic ? "legal" : "illegal")}>{(card.legalities.historic ? "Legal" : "Not Legal")}</dd><dt>Historic</dt></div>
+										<div><dd className={(card.legalities.modern ? "legal" : "illegal")}>{(card.legalities.modern ? "Legal" : "Not Legal")}</dd><dt>Modern</dt></div>
+										<div><dd className={(card.legalities.pauper ? "legal" : "illegal")}>{(card.legalities.pauper ? "Legal" : "Not Legal")}</dd><dt>Pauper</dt></div>
+										<div><dd className={(card.legalities.legacy ? "legal" : "illegal")}>{(card.legalities.legacy ? "Legal" : "Not Legal")}</dd><dt>Legacy</dt></div>
+										<div><dd className={(card.legalities.penny ? "legal" : "illegal")}>{(card.legalities.penny ? "Legal" : "Not Legal")}</dd><dt>Penny</dt></div>
+										<div><dd className={(card.legalities.vintage ? "legal" : "illegal")}>{(card.legalities.vintage ? "Legal" : "Not Legal")}</dd><dt>Vintage</dt></div>
+										<div><dd className={(card.legalities.commander ? "legal" : "illegal")}>{(card.legalities.commander ? "Legal" : "Not Legal")}</dd><dt>Commander</dt></div>
+									</dl>
+								</div>
 							</div>
 						</div>
 					</div>
-					{
-						(card.rulings.length > 0 ?
-							(<div className="flex flex-col bg-red-100 w-full items-center p-4 m-4">
-								<div className="flex flex-row flex-wrap w-200 text-justify">
-									<h3 className="w-full text-lg mb-2">Notes and Rules Information for {card.name} : </h3>
-									<Masonry columnsCount={2}>
-										{
-											card.rulings.map((e, i) => {
-												return (
-													<div key="i" className={(i % 2 ? "pl-4" : "pr-4") + " mb-4"} dangerouslySetInnerHTML={{ __html: addManaCost(e.text) + "<div class='text-sm italic text-gray-600 text-right'>" + e.date + "</div>" }}></div>
-												)
-											})
-										}
-									</Masonry>
-								</div>
-							</div>) : ''
-						)
-					}
 
+					<div className="container grey-bg rulings">
+						{
+							(card.rulings.length > 0 ?
+								(<div>
+										<h3>Notes and Rules Information for {card.name} : </h3>
+										<Masonry columnsCount={2}>
+											{
+												card.rulings.map((e, i) => {
+													return (
+														<div className={ i%2 ? "right" : "left" } key="i" dangerouslySetInnerHTML={{ __html: addManaCost(e.text) + "<div class='date'>" + e.date + "</div>" }}></div>
+													)
+												})
+											}
+										</Masonry>
+								</div>) : ''
+							)
+						}
+					</div>
 				</div>
 			);
 		}
